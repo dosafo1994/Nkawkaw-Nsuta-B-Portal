@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nkawkaw Nsuta B | Headteacher Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+    <div class="school-banner">
+  Nkawkaw Nsuta B Basic School
+</div>
+  <header>
+  <h1>Headteacher Dashboard</h1>
+  <button onclick="logout()" style="float: right;">Logout</button>
+</header>
+
+  <section id="submissions-section">
+    <h2>Teacher Submissions</h2>
+    <label for="filter-status">Filter by Status:</label>
+    <select id="filter-status" onchange="filterSubmissions()">
+      <option value="All">All</option>
+      <option value="Pending">Pending</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Class</th>
+          <th>Subject</th>
+          <th>Teacher</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="submission-table"></tbody>
+    </table>
+  </section>
+
+  <select id="class-select" onchange="renderRankingTable()">
+  <option value="JHS1">JHS1</option>
+  <option value="JHS2">JHS2</option>
+</select>>
+
+    <table id="ranking-table">
+      <thead>
+        <tr>
+          <th>Position</th>
+          <th>Student Name</th>
+          <th>Total Marks</th>
+        
+        </tr>
+      </thead>
+      <tbody id="ranking-body"></tbody>
+    </table>
+  </section>
+
+  <section id="students-section">
+    <h2>All Students</h2>
+    <label for="csv-upload">Upload Student CSV:</label>
+    <input type="file" id="csv-upload" accept=".csv" onchange="loadStudentCSV(event)" />
+
+    <br />
+
+    <label for="student-class-select">Select Class:</label>
+    <select id="class-select" onchange="renderRankingTable()">
+  <option value="JHS1">JHS1</option>
+  <option value="JHS2">JHS2</option>
+</select>
+
+    <input type="text" id="search-box" placeholder="Search by Name or ID" onkeyup="renderStudentList()" />
+
+    <table id="student-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Class</th>
+          <th>Subjects</th>
+        </tr>
+      </thead>
+      <tbody id="student-body"></tbody>
+    </table>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

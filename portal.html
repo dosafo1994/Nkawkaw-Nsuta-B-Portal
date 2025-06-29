@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nkawkaw Nsuta B - Role Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-family: sans-serif;
+      margin-top: 80px;
+    }
+
+    .role-card {
+      border: 1px solid #ccc;
+      padding: 30px 50px;
+      margin: 20px;
+      text-align: center;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+
+    .role-card:hover {
+      background-color: #f2f2f2;
+    }
+
+    h1 {
+      margin-bottom: 40px;
+      color: #333;
+    }
+
+    .container {
+      display: flex;
+      gap: 50px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+    <div class="school-banner">
+  Nkawkaw Nsuta B Basic School
+</div>
+  <h1>Welcome to Nkawkaw Nsuta B Score Portal</h1>
+
+  <div class="container">
+    <div class="role-card" onclick="window.location.href='teacher.html'">
+      <h2>👩🏽‍🏫 I’m a Teacher</h2>
+      <p>Enter student scores for your subject and class</p>
+    </div>
+
+    <div class="role-card" onclick="window.location.href='index.html'">
+      <h2>🧑🏽‍💼 I’m the Headteacher</h2>
+      <p>Review, approve, and monitor school-wide performance</p>
+    </div>
+  </div>
+</body>
+</html>

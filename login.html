@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Login | Nkawkaw Nsuta B</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 80px;
+      font-family: sans-serif;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 10px;
+      width: 250px;
+    }
+
+    #teacher-login, #headteacher-login {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      background: #f9f9f9;
+    }
+  </style>
+</head>
+<body>
+    <div class="school-banner">
+  Nkawkaw Nsuta B Basic School
+</div>
+  <h1>Log In</h1>
+
+  <div id="login-choice">
+    <button onclick="showTeacher()">I’m a Teacher</button>
+    <button onclick="showHeadteacher()">I’m the Headteacher</button>
+  </div>
+
+  <div id="teacher-login" style="display:none;">
+    <h2>Teacher Login</h2>
+    <select id="teacher-name">
+      <option value="">-- Select Your Name --</option>
+      <option value="Mr. Bright Ahiable">Mr. Bright Ahiable</option>
+      <option value="Mr. Stephen Amnakwah">Mr. Stephen Amnakwah</option>
+      <option value="Mr. Nii Quaye Kotei">Mr. Nii Quaye Kotei</option>
+      <option value="Mr. Yiadom">Mr. Yiadom</option>
+      <option value="Mrs. Cathrine">Mrs. Cathrine</option>
+      <option value="Mrs. Matilda Sagoe">Mrs. Matilda Sagoe</option>
+      <option value="Mr. Frank Opoku">Mr. Frank Opoku</option>
+    </select>
+    <button onclick="loginTeacher()">Enter</button>
+  </div>
+
+  <div id="headteacher-login" style="display:none;">
+    <h2>Headteacher Login</h2>
+    <input type="password" id="head-pass" placeholder="Enter Passcode" />
+    <button onclick="loginHeadteacher()">Enter</button>
+  </div>
+
+  <script>
+    function showTeacher() {
+      document.getElementById("teacher-login").style.display = "block";
+      document.getElementById("headteacher-login").style.display = "none";
+    }
+
+    function showHeadteacher() {
+      document.getElementById("headteacher-login").style.display = "block";
+      document.getElementById("teacher-login").style.display = "none";
+    }
+
+    function loginTeacher() {
+      const name = document.getElementById("teacher-name").value;
+      if (!name) return alert("Please select your name");
+      sessionStorage.setItem("role", "teacher");
+      sessionStorage.setItem("username", name);
+      window.location.href = "teacher.html";
+    }
+
+    function loginHeadteacher() {
+      const pass = document.getElementById("head-pass").value;
+      if (pass === "admin123") { // 🔒 Set your secure passcode here
+        sessionStorage.setItem("role", "headteacher");
+        sessionStorage.setItem("username", "Headteacher");
+        window.location.href = "index.html";
+      } else {
+        alert("Incorrect passcode");
+      }
+    }
+  </script>
+</body>
+</html>

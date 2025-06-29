@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Print Report Card | Nkawkaw Nsuta B</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="preload.js"></script>
+  <style>
+    @media print {
+      .no-print { display: none; }
+      input, textarea { border: none; background: none; }
+    }
+
+    .report-container {
+      background: white;
+      padding: 40px;
+      max-width: 850px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      font-size: 1rem;
+      line-height: 1.5;
+    }
+
+    .info-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .info-grid div {
+      width: 48%;
+    }
+
+    textarea {
+      width: 100%;
+      height: 50px;
+    }
+
+    .section-title {
+      margin-top: 30px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      color: var(--primary);
+      border-bottom: 1px solid var(--primary);
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="school-banner">Nkawkaw Nsuta B Basic School</div>
+
+  <div class="report-container">
+    <h2>Student Report Card</h2>
+
+    <div class="no-print">
+      <label for="select-student">Select Student:</label>
+      <select id="select-student"></select>
+      <button onclick="loadReport()">Generate Report</button>
+    </div>
+
+    <div id="report-area" style="display:none;">
+      <div class="info-grid">
+        <div><strong>Name:</strong> <span id="r-name"></span></div>
+        <div><strong>ID:</strong> <span id="r-id"></span></div>
+        <div><strong>Class:</strong> <span id="r-class"></span></div>
+        <div><strong>Total No. on Roll:</strong> <span id="r-roll"></span></div>
+        <div><strong>Position in Class:</strong> <span id="r-position"></span></div>
+        <div><strong>Vacation Date:</strong> <input type="text" class="no-print" id="vac-date" /></div>
+        <div><strong>Reopening Date:</strong> <input type="text" class="no-print" id="reopen-date" /></div>
+      </div>
+
+      <div class="section-title">Subject Scores</div>
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Class Score (60)</th>
+            <th>Exam Score (100)</th>
+            <th>Total (100)</th>
+            <th>Position</th>
+          </tr>
+        </thead>
+        <tbody id="subject-scores"></tbody>
+      </table>
+
+      <div class="section-title">Summary & Observations</div>
+      <div class="info-grid">
+        <div><strong>Total Marks:</strong> <span id="r-total"></span></div>
+        <div><strong>Average:</strong> <span id="r-average"></span></div>
+        <div><strong>Total Attendance:</strong> <input type="text" class="no-print" /></div>
+        <div><strong>Times School Opened:</strong> <input type="text" class="no-print" /></div>
+        <div><strong>Interest:</strong><br><textarea class="no-print"></textarea></div>
+        <div><strong>Conduct:</strong><br><textarea class="no-print"></textarea></div>
+        <div><strong>Strength / Weakness:</strong><br><textarea class="no-print"></textarea></div>
+        <div><strong>Teacher's Remarks:</strong><br><textarea class="no-print"></textarea></div>
+        <div><strong>Headteacher's Remarks:</strong><br><textarea class="no-print"></textarea></div>
+      </div>
+
+      <br class="no-print"/>
+      <button class="no-print" onclick="window.print()">🖨️ Print Report</button>
+    </div>
+  </div>
+
+  <script src="report.js"></script>
+</body>
+</html>

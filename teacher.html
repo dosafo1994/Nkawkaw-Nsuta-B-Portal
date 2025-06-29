@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Score Entry | Nkawkaw Nsuta B</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    #notification-icon {
+      float: right;
+      cursor: pointer;
+      position: relative;
+      font-size: 1.2rem;
+    }
+
+    .notif-badge {
+      position: absolute;
+      top: -6px;
+      right: -10px;
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 6px;
+      font-size: 0.75rem;
+    }
+
+    #notif-list {
+      display: none;
+      background: #fff8e5;
+      border: 1px solid #ffd580;
+      padding: 10px;
+      margin-top: 5px;
+      width: 100%;
+      max-width: 450px;
+    }
+
+    #notif-list li {
+      margin-bottom: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="school-banner">Nkawkaw Nsuta B Basic School</div>
+
+  <h1 id="welcome-msg">
+    Welcome, <span id="teacher-name">[Teacher]</span>
+    <span id="notification-icon" onclick="toggleNotifications()">
+      🛎️ <span id="notif-badge" class="notif-badge" style="display:none;">0</span>
+    </span>
+  </h1>
+
+  <ul id="notif-list"></ul>
+
+  <section id="teacher-info">
+    <label>Choose Subject/Class:</label>
+    <select id="assignment-select">
+      <option value="">-- Select Assignment --</option>
+    </select>
+
+    <br><br>
+    <button onclick="loadStudents()">Start Entering Scores</button>
+    <button onclick="logout()" style="margin-left: 20px;">Logout</button>
+  </section>
+
+  <section id="score-entry" style="display: none;">
+    <h2 id="subject-header">Enter Scores</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Student ID</th>
+          <th>Name</th>
+          <th>Class Score (60)</th>
+          <th>Exam Score (100)</th>
+        </tr>
+      </thead>
+      <tbody id="score-table-body"></tbody>
+    </table>
+    <button onclick="submitScores()">Submit Scores</button>
+  </section>
+
+  <script src="teacher.js"></script>
+</body>
+</html>

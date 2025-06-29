@@ -1,0 +1,160 @@
+/* ===== Root Variables ===== */
+:root {
+  --primary: #f75c5c;        /* Light red */
+  --accent: #ffeaea;         /* Soft background tint */
+  --white: #ffffff;
+  --text: #333333;
+  --shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* ===== Reset & Base ===== */
+body {
+  margin: 0;
+  padding: 0 30px;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: var(--accent);
+  color: var(--text);
+}
+
+h1, h2, h3 {
+  color: var(--primary);
+}
+
+/* ===== Header ===== */
+header {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 8px var(--shadow);
+}
+
+/* ===== Buttons ===== */
+button {
+  background-color: var(--primary);
+  color: var(--white);
+  border: none;
+  padding: 10px 18px;
+  font-size: 1rem;
+  border-radius: 4px;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+button:hover {
+  background-color: #e04b4b;
+}
+
+/* ===== Inputs & Selects ===== */
+input[type="text"],
+input[type="password"],
+input[type="number"],
+select {
+  padding: 8px;
+  width: 250px;
+  margin: 8px 0 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+/* ===== Tables ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--white);
+  box-shadow: 0 2px 6px var(--shadow);
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 12px 16px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: var(--primary);
+  color: var(--white);
+}
+
+/* ===== Badge Styling for Status ===== */
+.badge {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  font-size: 0.9rem;
+}
+
+.badge.pending {
+  background-color: #ffdd99;
+  color: #333;
+}
+
+.badge.accepted {
+  background-color: #7edc92;
+  color: #033d15;
+}
+
+.badge.rejected {
+  background-color: #f86c6c;
+  color: #fff;
+}
+
+/* ===== Responsive Layout ===== */
+@media screen and (max-width: 768px) {
+  body {
+    padding: 15px;
+  }
+
+  table th, table td {
+    font-size: 0.9rem;
+    padding: 8px;
+  }
+
+  input, select, button {
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+/* ===== Utility Classes ===== */
+.center {
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.notice {
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
+}
+
+/* ===== Portal Cards ===== */
+.role-card {
+  border: 1px solid #ddd;
+  padding: 30px 50px;
+  margin: 20px;
+  text-align: center;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  background-color: var(--white);
+}
+
+.role-card:hover {
+  background-color: #fff1f1;
+}
+
+.container {
+  display: flex;
+  gap: 50px;
+  flex-wrap: wrap;
+  justify-content: center;
+}

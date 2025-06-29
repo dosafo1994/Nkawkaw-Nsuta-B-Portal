@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Term Observations Entry</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: sans-serif; padding: 30px; }
+    textarea, input { width: 100%; margin-bottom: 10px; padding: 8px; }
+    select { width: 100%; padding: 8px; margin-bottom: 15px; }
+    label { font-weight: bold; margin-top: 20px; display: block; }
+    .entry-box { max-width: 700px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div class="school-banner">Nkawkaw Nsuta B Basic School</div>
+  <div class="entry-box">
+    <h2>Enter Term Observations</h2>
+
+    <label>Class</label>
+    <select id="select-class">
+      <option value="">-- Select --</option>
+      <option value="JHS1">JHS1</option>
+      <option value="JHS2">JHS2</option>
+    </select>
+
+    <label>Student</label>
+    <select id="select-student"></select>
+
+    <label>Total Attendance</label>
+    <input type="number" id="attendance" placeholder="e.g. 55">
+
+    <label>Times School Opened</label>
+    <input type="number" id="opened" placeholder="e.g. 60">
+
+    <label>Strength / Weakness</label>
+    <textarea id="strength"></textarea>
+
+    <label>Interest</label>
+    <textarea id="interest"></textarea>
+
+    <label>Conduct</label>
+    <textarea id="conduct"></textarea>
+
+    <label>Teacher's Remarks</label>
+    <textarea id="teacher-remarks"></textarea>
+
+    <button onclick="saveRemarks()">💾 Save Remarks</button>
+  </div>
+
+  <script src="remarks.js"></script>
+</body>
+</html>
