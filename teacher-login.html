@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Teacher Login | Nsuta Portal</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="router.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f4f9ff;
+      display: flex;
+      justify-content: center;
+      padding-top: 100px;
+    }
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover { background: #005fa3; }
+    a {
+      font-size: 14px;
+      color: #0077cc;
+      text-decoration: none;
+    }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>👩‍🏫 Teacher Login</h2>
+    <input type="text" id="username" placeholder="Phone Number (e.g. 0241234567)" />
+    <input type="password" id="pin" placeholder="4-digit PIN" maxlength="4" />
+    <button onclick="login()">Login</button>
+    <a href="forgot-pin.html">Forgot PIN?</a>
+  </div>
+
+  <script>
+    function login() {
+      const username = document.getElementById("username").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const role = "teacher";
+
+      if (!username || !pin) {
+        alert("Please fill in both fields.");
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem("userAccounts")) || [];
+      const user = users.find(
+        u => u.phone === username && u.pin === pin && u.role === role
+      );
+
+      if (!user) {
+        alert("Incorrect credentials.");
+        return;
+      }
+
+      sessionStorage.setItem("username", user.phone);
+      sessionStorage.setItem("role", user.role);
+      sessionStorage.setItem("displayName", user.name || "Teacher");
+      sessionStorage.setItem("assignedSubjects", JSON.stringify(user.subjects || []));
+
+      window.location.href = "teacher.html";
+    }
+  </script>
+</body>
+</html>

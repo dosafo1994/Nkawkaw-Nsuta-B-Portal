@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nkawkaw Nsuta B - Role Portal</title>
+  <script src="router.js"></script>
+  <script src="preload.js"></script>
   <link rel="stylesheet" href="style.css" />
   <style>
     body {
@@ -12,6 +14,13 @@
       align-items: center;
       font-family: sans-serif;
       margin-top: 80px;
+    }
+
+    .school-banner {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     .role-card {
@@ -43,18 +52,16 @@
   </style>
 </head>
 <body>
-    <div class="school-banner">
-  Nkawkaw Nsuta B Basic School
-</div>
+  <div class="school-banner">Nkawkaw Nsuta B Basic School</div>
   <h1>Welcome to Nkawkaw Nsuta B Score Portal</h1>
 
   <div class="container">
-    <div class="role-card" onclick="window.location.href='teacher.html'">
+    <div class="role-card" onclick="window.location.href='login.html'">
       <h2>👩🏽‍🏫 I’m a Teacher</h2>
       <p>Enter student scores for your subject and class</p>
     </div>
 
-    <div class="role-card" onclick="window.location.href='index.html'">
+    <div class="role-card" onclick="window.location.href='head-login.html'">
       <h2>🧑🏽‍💼 I’m the Headteacher</h2>
       <p>Review, approve, and monitor school-wide performance</p>
     </div>

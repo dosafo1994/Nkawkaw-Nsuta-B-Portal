@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Assign Teachers</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    select, input, button { padding: 8px; margin: 5px; width: 250px; }
+    table { margin-top: 20px; width: 100%; border-collapse: collapse; }
+    th, td { padding: 8px; border: 1px solid #ccc; }
+    th { background: #f5f5f5; }
+    .assignments td:last-child { text-align: right; }
+  </style>
+  <script src="router.js"></script>
+</head>
+<body>
+  <script>
+    const role = sessionStorage.getItem("role");
+    if (role !== "headteacher") {
+      alert("Access denied.");
+      window.location.href = "welcome.html";
+    }
+  </script>
+
+  <h2>🧑‍🏫 Assign Subjects to Teachers</h2>
+
+  <label>Select Teacher:</label>
+  <select id="teacher-select"></select>
+
+  <label>Subject:</label>
+  <input type="text" id="subject-input" placeholder="e.g. Mathematics" />
+
+  <label>Class:</label>
+  <select id="class-select">
+    <option value="">-- Choose Class --</option>
+    <option value="JHS 1">JHS 1</option>
+    <option value="JHS 2">JHS 2</option>
+    <option value="JHS 3">JHS 3</option>
+  </select>
+
+  <button onclick="addAssignment()">➕ Add Assignment</button>
+  <button onclick="window.location.href='portals.html'">🏠 Back to Dashboard</button>
+
+  <table>
+    <thead>
+      <tr><th>Teacher</th><th>Subject</th><th>Class</th><th>Actions</th></tr>
+    </thead>
+    <tbody id="assignment-table" class="assignments"></tbody>
+  </table>
+
+  <script>
+    let teacherList = JSON.parse(localStorage.getItem("userAccounts")) || [];
+    let teacherAccounts = JSON.parse(localStorage.getItem("teacherAccounts")) || [];
+
+    function populateTeacherOptions() {
+      const select = document.getElementById("teacher-select");
+      select.innerHTML = '<option value="">-- Choose Teacher --</option>';
+      teacherList
+        .filter(t => t.role === "teacher")
+        .forEach(t => {
+          const option = document.createElement("option");
+          option.value = t.phone;
+          option.textContent = `${t.name} (${t.phone})`;
+          select.appendChild(option);
+        });
+    }
+
+    function addAssignment() {
+      const teacherPhone = document.getElementById("teacher-select").value;
+      const subject = document.getElementById("subject-input").value.trim();
+      const className = document.getElementById("class-select").value;
+
+      if (!teacherPhone || !subject || !className) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      let teacher = teacherAccounts.find(t => t.phone === teacherPhone);
+      if (!teacher) {
+        const teacherDetails = teacherList.find(t => t.phone === teacherPhone);
+        teacher = {
+          phone: teacherPhone,
+          name: teacherDetails?.name || "Unnamed",
+          assignments: []
+        };
+        teacherAccounts.push(teacher);
+      }
+
+      const exists = teacher.assignments?.some(a => a.subject === subject && a.class === className);
+      if (exists) {
+        alert("Assignment already exists.");
+        return;
+      }
+
+      teacher.assignments = teacher.assignments || [];
+      teacher.assignments.push({ subject, class: className });
+      saveAndRender();
+    }
+
+    function removeAssignment(tIndex, aIndex) {
+      teacherAccounts[tIndex].assignments.splice(aIndex, 1);
+      if (teacherAccounts[tIndex].assignments.length === 0) {
+        teacherAccounts.splice(tIndex, 1);
+      }
+      saveAndRender();
+    }
+
+    function saveAndRender() {
+      localStorage.setItem("teacherAccounts", JSON.stringify(teacherAccounts));
+      renderAssignments();
+    }
+
+    function renderAssignments() {
+      const tbody = document.getElementById("assignment-table");
+      tbody.innerHTML = "";
+
+      teacherAccounts.forEach((t, tIndex) => {
+        t.assignments?.forEach((a, aIndex) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${t.name}</td>
+            <td>${a.subject}</td>
+            <td>${a.class}</td>
+            <td><button onclick="removeAssignment(${tIndex}, ${aIndex})">Remove</button></td>
+          `;
+          tbody.appendChild(row);
+        });
+      });
+    }
+
+    populateTeacherOptions();
+    renderAssignments();
+  </script>
+</body>
+</html>

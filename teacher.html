@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>Teacher Score Entry | Nkawkaw Nsuta B</title>
+  <script src="router.js"></script>
   <link rel="stylesheet" href="style.css" />
   <style>
     #notification-icon {
@@ -36,6 +37,17 @@
     #notif-list li {
       margin-bottom: 8px;
     }
+
+    a.assignment-link {
+      display: block;
+      margin-top: 15px;
+      color: #0077cc;
+      text-decoration: none;
+    }
+
+    a.assignment-link:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -51,30 +63,12 @@
   <ul id="notif-list"></ul>
 
   <section id="teacher-info">
-    <label>Choose Subject/Class:</label>
-    <select id="assignment-select">
-      <option value="">-- Select Assignment --</option>
-    </select>
+    <h3>Your Assigned Subjects</h3>
+    <div id="assignment-list"></div>
 
-    <br><br>
-    <button onclick="loadStudents()">Start Entering Scores</button>
-    <button onclick="logout()" style="margin-left: 20px;">Logout</button>
-  </section>
-
-  <section id="score-entry" style="display: none;">
-    <h2 id="subject-header">Enter Scores</h2>
-    <table>
-      <thead>
-        <tr>
-          <th>Student ID</th>
-          <th>Name</th>
-          <th>Class Score (60)</th>
-          <th>Exam Score (100)</th>
-        </tr>
-      </thead>
-      <tbody id="score-table-body"></tbody>
-    </table>
-    <button onclick="submitScores()">Submit Scores</button>
+    <br />
+    <button onclick="logout()">Logout</button>
+    <a href="change-pin.html" style="margin-left: 20px;">Change My PIN</a>
   </section>
 
   <script src="teacher.js"></script>

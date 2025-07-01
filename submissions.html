@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Review Score Submissions</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: left;
+      font-size: 14px;
+    }
+    th { background: #f0f0f0; }
+    .badge {
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 4px;
+      color: white;
+    }
+    .Pending { background: orange; }
+    .Accepted { background: green; }
+    .Rejected { background: crimson; }
+    @media print {
+      .no-print { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <script>
+    const role = sessionStorage.getItem("role");
+    if (role !== "headteacher") {
+      alert("Access denied.");
+      window.location.href = "welcome.html";
+    }
+  </script>
+
+  <h2>📝 Submitted Score Entries</h2>
+
+  <div class="no-print">
+    <label for="statusFilter"><strong>Status Filter:</strong></label>
+    <select id="statusFilter" onchange="renderTable()">
+      <option value="">All</option>
+      <option value="Pending">Pending</option>
+      <option value="Accepted">Accepted</option>
+      <option value="Rejected">Rejected</option>
+    </select>
+    <span id="submissionCount" style="margin-left: 20px; font-weight: bold;"></span>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Teacher</th>
+        <th>Subject</th>
+        <th>Class</th>
+        <th>Student ID</th>
+        <th>Name</th>
+        <th>Class Score</th>
+        <th>Exam Score</th>
+        <th>Final</th>
+        <th>Status</th>
+        <th class="no-print">Actions</th>
+      </tr>
+    </thead>
+    <tbody id="scoreTable"></tbody>
+  </table>
+
+  <script>
+    let submitted = JSON.parse(localStorage.getItem("submittedScores")) || [];
+
+    function renderTable() {
+      const tbody = document.getElementById("scoreTable");
+      const filter = document.getElementById("statusFilter").value;
+      const visible = submitted.filter(e => !filter || e.status === filter);
+      tbody.innerHTML = "";
+
+      document.getElementById("submissionCount").textContent =
+        `Showing ${visible.length} submission(s)`;
+
+      visible.forEach((entry, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${entry.teacher}</td>
+          <td>${entry.subject}</td>
+          <td>${entry.class}</td>
+          <td>${entry.studentId}</td>
+          <td>${entry.studentName}</td>
+          <td>${entry.classScore}</td>
+          <td>${entry.examScore}</td>
+          <td>${entry.finalScore}</td>
+          <td><span class="badge ${entry.status}">${entry.status}</span></td>
+          <td class="no-print">
+            ${entry.status === "Pending" ? `
+              <button onclick="updateStatus(${index}, 'Accepted')">✅ Accept</button>
+              <button onclick="updateStatus(${index}, 'Rejected')">❌ Reject</button>
+            ` : `
+              <button onclick="unlockEntry(${index})">🔓 Unlock</button>
+            `}
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateStatus(index, newStatus) {
+      submitted[index].status = newStatus;
+      const teacher = submitted[index].teacher;
+
+      const notif = JSON.parse(localStorage.getItem("teacherNotifications")) || {};
+      notif[teacher] = notif[teacher] || [];
+      notif[teacher].push({
+        subject: submitted[index].subject,
+        class: submitted[index].class,
+        status: newStatus,
+        date: new Date().toLocaleDateString()
+      });
+
+      localStorage.setItem("teacherNotifications", JSON.stringify(notif));
+      localStorage.setItem("submittedScores", JSON.stringify(submitted));
+      renderTable();
+    }
+
+    function unlockEntry(index) {
+      const entry = submitted[index];
+      const confirmed = confirm(`Are you sure you want to unlock ${entry.subject} for ${entry.class} submitted by ${entry.teacher}?`);
+      if (!confirmed) return;
+
+      submitted = submitted.filter(e =>
+        !(e.teacher === entry.teacher &&
+          e.subject === entry.subject &&
+          e.class === entry.class)
+      );
+
+      localStorage.setItem("submittedScores", JSON.stringify(submitted));
+      alert(`🔓 Unlocked ${entry.subject} for ${entry.class} — ${entry.teacher}`);
+      renderTable();
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

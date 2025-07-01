@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Class Summary Report</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      border: 1px solid #aaa;
+      padding: 6px;
+      text-align: center;
+    }
+    th {
+      background: #f0f0f0;
+    }
+    .meta {
+      margin-bottom: 15px;
+      font-size: 14px;
+      font-weight: bold;
+    }
+    button {
+      margin-top: 20px;
+      padding: 6px 12px;
+    }
+    @media print {
+      body { margin: 10px; }
+      table { page-break-inside: avoid; }
+      button { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <h2>📋 Nkawkaw Nsuta B Basic School — Terminal Report Summary</h2>
+  <div class="meta" id="metaDisplay"></div>
+
+  <table id="summaryTable">
+    <thead id="summaryHead"></thead>
+    <tbody id="summaryBody"></tbody>
+  </table>
+
+  <button onclick="window.location.href='portals.html'">🏠 Back to Dashboard</button>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const className = params.get("class") || "JHS 1"; // Default fallback
+
+    const termData = JSON.parse(localStorage.getItem("schoolTerm")) || {};
+    const year = termData.year || "2025";
+    const term = termData.term || "Term 1";
+
+    document.getElementById("metaDisplay").textContent = `📘 Class: ${className}  |  Term: ${term}  |  Year: ${year}`;
+
+    const students = JSON.parse(localStorage.getItem("studentDatabase")) || [];
+    const scores = JSON.parse(localStorage.getItem("submittedScores")) || [];
+
+    const subjects = [...new Set(scores.filter(s => s.class === className).map(s => s.subject))];
+
+    const studentMap = {};
+    scores.forEach(e => {
+      if (e.class !== className) return;
+      if (!studentMap[e.studentId]) {
+        studentMap[e.studentId] = {
+          name: e.studentName,
+          id: e.studentId,
+          scores: {},
+          total: 0
+        };
+      }
+      const final = parseFloat(e.finalScore);
+      studentMap[e.studentId].scores[e.subject] = final;
+      studentMap[e.studentId].total += final;
+    });
+
+    const ranked = Object.values(studentMap)
+      .sort((a, b) => b.total - a.total)
+      .map((s, i) => ({ ...s, rank: i + 1 }));
+
+    const thead = document.getElementById("summaryHead");
+    const subCols = subjects.map(sub => `<th>${sub}</th>`).join("");
+    thead.innerHTML = `
+      <tr>
+        <th>Student Name</th>
+        ${subCols}
+        <th>Total</th>
+        <th>Average</th>
+        <th>Rank</th>
+      </tr>
+    `;
+
+    const tbody = document.getElementById("summaryBody");
+    ranked.forEach(s => {
+      const row = document.createElement("tr");
+      const cells = subjects.map(sub => `<td>${s.scores[sub] ?? ""}</td>`).join("");
+      const avg = s.total / subjects.length;
+      row.innerHTML = `
+        <td>${s.name}</td>
+        ${cells}
+        <td>${s.total}</td>
+        <td>${avg.toFixed(1)}</td>
+        <td>${s.rank}</td>
+      `;
+      tbody.appendChild(row);
+    });
+  </script>
+</body>
+</html>

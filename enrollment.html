@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pupil Enrollment Manager</title>
+  <script src="router.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    h2 { text-align: center; }
+    input, select { padding: 6px; font-size: 14px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background: #f0f0f0; }
+    button { padding: 6px 12px; margin: 5px; font-size: 14px; cursor: pointer; }
+    .actions button { margin-right: 5px; }
+    .controls { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; }
+  </style>
+</head>
+<body>
+
+  <h2>📋 Pupil Enrollment Manager</h2>
+
+  <div class="controls">
+    <div>
+      <input type="file" accept=".csv" id="csvFile" />
+      <button onclick="importCSV()">Import CSV</button>
+      <button onclick="downloadCSV()">Download CSV</button>
+    </div>
+    <div>
+      <button onclick="addNewRow()">+ Add New Pupil</button>
+      <button onclick="clearAll()">🗑 Clear All</button>
+      <button onclick="window.location.href='portals.html'">🏠 Back to Dashboard</button>
+    </div>
+  </div>
+
+  <table id="pupilTable">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Student ID</th>
+        <th>Class</th>
+        <th>Gender</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    let pupils = JSON.parse(localStorage.getItem("studentDatabase")) || [];
+
+    function syncStorage() {
+      localStorage.setItem("studentDatabase", JSON.stringify(pupils));
+      localStorage.setItem("enrollmentList", JSON.stringify(pupils));
+    }
+
+    function renderTable() {
+      const tbody = document.querySelector("#pupilTable tbody");
+      tbody.innerHTML = "";
+
+      pupils.forEach((pupil, index) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td contenteditable onblur="updateField(${index}, 'name', this.innerText)">${pupil.name}</td>
+          <td contenteditable onblur="updateField(${index}, 'studentId', this.innerText)">${pupil.studentId || ""}</td>
+          <td contenteditable onblur="updateField(${index}, 'class', this.innerText)">${pupil.class}</td>
+          <td>
+            <select onchange="updateField(${index}, 'gender', this.value)">
+              <option value="Male" ${pupil.gender === "Male" ? "selected" : ""}>Male</option>
+              <option value="Female" ${pupil.gender === "Female" ? "selected" : ""}>Female</option>
+            </select>
+          </td>
+          <td class="actions">
+            <button onclick="removePupil(${index})">🗑 Remove</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      syncStorage();
+    }
+
+    function updateField(index, field, value) {
+      pupils[index][field] = value.trim();
+      syncStorage();
+    }
+
+    function addNewRow() {
+      pupils.push({ name: "", studentId: "", class: "", gender: "Male" });
+      renderTable();
+    }
+
+    function removePupil(index) {
+      if (confirm("Are you sure you want to remove this pupil?")) {
+        pupils.splice(index, 1);
+        renderTable();
+      }
+    }
+
+    function clearAll() {
+      if (confirm("Clear entire enrollment list?")) {
+        pupils = [];
+        renderTable();
+      }
+    }
+
+    function importCSV() {
+      const file = document.getElementById("csvFile").files[0];
+      if (!file) return alert("Please select a CSV file.");
+
+      Papa.parse(file, {
+        header: true,
+        skipEmptyLines: true,
+        complete: function (results) {
+          const data = results.data;
+          data.forEach(row => {
+            if (row.name && (row.id || row.studentId) && row.class && row.gender) {
+              pupils.push({
+                name: row.name.trim(),
+                studentId: (row.id || row.studentId).trim(),
+                class: row.class.trim(),
+                gender: row.gender.trim()
+              });
+            }
+          });
+          renderTable();
+        }
+      });
+    }
+
+    function downloadCSV() {
+      const headers = ["name", "studentId", "class", "gender"];
+      const csvContent = [
+        headers.join(","),
+        ...pupils.map(p => headers.map(h => `"${p[h] || ""}"`).join(","))
+      ].join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pupil-enrollment.csv";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

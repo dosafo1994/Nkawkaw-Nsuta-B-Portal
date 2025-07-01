@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Change My PIN</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="router.js"></script>
+  <style>
+    body {
+      max-width: 400px;
+      margin: 80px auto;
+      font-family: Arial, sans-serif;
+      background: #f9faff;
+    }
+    h2 {
+      text-align: center;
+      color: var(--primary);
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0 12px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+    }
+    .success {
+      background: #d5f5d5;
+      border: 1px solid #8fce8f;
+      padding: 12px;
+      margin-top: 12px;
+      color: #206020;
+    }
+    .error {
+      background: #ffdede;
+      border: 1px solid #ff9999;
+      padding: 12px;
+      margin-top: 12px;
+      color: #a00;
+    }
+  </style>
+</head>
+<body>
+  <h2>🔑 Change My PIN</h2>
+
+  <label>Old PIN</label>
+  <input type="password" id="oldPin" maxlength="4" placeholder="Enter current PIN" />
+
+  <label>New PIN</label>
+  <input type="password" id="newPin" maxlength="4" placeholder="Enter new PIN" />
+
+  <label>Confirm New PIN</label>
+  <input type="password" id="confirmPin" maxlength="4" placeholder="Repeat new PIN" />
+
+  <button onclick="changePin()">Update PIN</button>
+
+  <div id="resultBox"></div>
+
+  <script>
+    const users = JSON.parse(localStorage.getItem("userAccounts")) || [];
+    const phone = sessionStorage.getItem("username");
+    const role = sessionStorage.getItem("role");
+
+    function changePin() {
+      const oldPin = document.getElementById("oldPin").value.trim();
+      const newPin = document.getElementById("newPin").value.trim();
+      const confirmPin = document.getElementById("confirmPin").value.trim();
+      const resultBox = document.getElementById("resultBox");
+
+      const user = users.find(u =>
+        (u.phone === phone || u.username === phone) &&
+        u.role === role &&
+        u.pin === oldPin
+      );
+
+      if (!user) {
+        resultBox.innerHTML = `<div class="error">❌ Incorrect old PIN or session expired.</div>`;
+        return;
+      }
+
+      if (!/^\d{4}$/.test(newPin)) {
+        resultBox.innerHTML = `<div class="error">❌ PIN must be exactly 4 digits.</div>`;
+        return;
+      }
+
+      if (newPin !== confirmPin) {
+        resultBox.innerHTML = `<div class="error">❌ New PINs do not match.</div>`;
+        return;
+      }
+
+      user.pin = newPin;
+      localStorage.setItem("userAccounts", JSON.stringify(users));
+      resultBox.innerHTML = `<div class="success">✅ PIN updated successfully.</div>`;
+
+      // Clear inputs
+      document.getElementById("oldPin").value = "";
+      document.getElementById("newPin").value = "";
+      document.getElementById("confirmPin").value = "";
+    }
+  </script>
+</body>
+</html>

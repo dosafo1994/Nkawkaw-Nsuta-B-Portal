@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Terminal Report</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    body {
+      font-family: Georgia, serif;
+      margin: 0;
+      padding: 40px;
+      background: white;
+    }
+
+    #export-btn {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .report {
+      width: 700px;
+      margin: auto;
+      padding-bottom: 40px;
+      page-break-after: always;
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .logo img {
+      height: 80px;
+    }
+
+    .header-text {
+      text-align: center;
+      flex: 1;
+      margin-left: -80px;
+    }
+
+    .school-name { font-size: 20px; font-weight: bold; }
+    .motto { font-style: italic; margin-bottom: 10px; }
+
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-top: 20px;
+    }
+
+    .student-photo {
+      width: 100px;
+      height: 100px;
+      border: 1px solid #ccc;
+      object-fit: cover;
+    }
+
+    .student-info {
+      width: calc(100% - 120px);
+      font-size: 15px;
+      line-height: 1.6;
+      padding-right: 20px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      font-size: 14px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: center;
+    }
+
+    .footer {
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .signature {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 40px;
+    }
+
+    .signature div {
+      width: 45%;
+      text-align: center;
+    }
+
+    .remark { padding: 2px 6px; border-radius: 4px; }
+    .remark1 { color: darkgreen; font-weight: bold; }
+    .remark2 { color: green; font-weight: bold; }
+    .remark3 { color: olive; font-weight: bold; }
+    .remark4 { color: teal; }
+    .remark5 { color: goldenrod; }
+    .remark6 { color: orange; font-style: italic; }
+    .remark7 { color: darkorange; font-style: italic; }
+    .remark8 { color: crimson; font-style: italic; }
+    .remark9 { color: firebrick; font-weight: bold; }
+
+    @media print {
+      #export-btn { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <button id="export-btn" onclick="downloadPDF()">Download All Reports (PDF)</button>
+  <div id="reportContainer"></div>
+
+  <script>
+    const termData = JSON.parse(localStorage.getItem("schoolTerm")) || {};
+    const term = termData.term || "Term 2";
+    const year = termData.year || "2025";
+
+    const students = JSON.parse(localStorage.getItem("studentDatabase")) || [];
+    const scores = JSON.parse(localStorage.getItem("submittedScores")) || [];
+
+    const studentMap = {};
+    scores.forEach(entry => {
+      if (!studentMap[entry.studentId]) {
+        studentMap[entry.studentId] = {
+          name: entry.studentName,
+          class: entry.class,
+          id: entry.studentId,
+          entries: [],
+          total: 0
+        };
+      }
+      const final = parseFloat(entry.finalScore);
+      studentMap[entry.studentId].entries.push({
+        subject: entry.subject,
+        classScore: entry.classScore,
+        examScore: entry.examScore,
+        finalScore: final,
+        grade: getGrade(final),
+        remark: getRemark(final)
+      });
+      studentMap[entry.studentId].total += final;
+    });
+
+    const rankedStudents = Object.values(studentMap)
+      .sort((a, b) => b.total - a.total)
+      .map((s, i) => ({ ...s, position: i + 1 }));
+
+    function getGrade(score) {
+      if (score >= 90) return "1";
+      if (score >= 80) return "2";
+      if (score >= 70) return "3";
+      if (score >= 60) return "4";
+      if (score >= 55) return "5";
+      if (score >= 50) return "6";
+      if (score >= 40) return "7";
+      if (score >= 35) return "8";
+      return "9";
+    }
+
+    function getRemark(score) {
+      if (score >= 90) return "Exceptional";
+      if (score >= 80) return "Excellent";
+      if (score >= 70) return "Very Good";
+      if (score >= 60) return "Good";
+      if (score >= 55) return "Fairly Good";
+      if (score >= 50) return "Satisfactory";
+      if (score >= 40) return "Needs Improvement";
+      if (score >= 35) return "Below Average";
+      return "Poor";
+    }
+
+    function getTeacherRemark(total, count) {
+      const percent = (total / (count * 100)) * 100;
+      if (percent >= 90) return "Outstanding performance. Keep it up!";
+      if (percent >= 80) return "Excellent effort. Maintain this standard.";
+      if (percent >= 70) return "Very good work. Aim even higher.";
+      if (percent >= 60) return "Good. Can improve with consistent effort.";
+      if (percent >= 50) return "Satisfactory. Show more commitment.";
+      if (percent >= 40) return "Below average. Must work harder.";
+      if (percent >= 30) return "Weak. Needs serious improvement.";
+      return "Poor. Seek support and focus on basics.";
+    }
+
+    function getConductComment(percent) {
+      if (percent >= 90) return "Conduct is excellent";
+      if (percent >= 80) return "Classroom work is excellent";
+      if (percent >= 70) return "Gives consistent effort to assignments";
+      if (percent >= 60) return "Responds appropriately when corrected";
+      if (percent >= 50) return "Conduct is average";
+      if (percent >= 40) return "Conduct is below average";
+      if (percent >= 30) return "Easily distracted from task";
+      return "Conduct is unsatisfactory";
+    }
+
+    function renderReports() {
+      const container = document.getElementById("reportContainer");
+
+      rankedStudents.forEach(s => {
+        const div = document.createElement("div");
+        div.className = "report";
+
+        const subjects = s.entries.map(e => `
+          <tr>
+            <td>${e.subject}</td>
+            <td>${e.classScore}</td>
+            <td>${e.examScore}</td>
+            <td>${e.finalScore}</td>
+            <td>${e.grade}</td>
+            <td class="remark remark${e.grade}">${e.remark}</td>
+          </tr>
+        `).join("");
+
+        const percent = (s.total / (s.entries.length * 100)) * 100;
+        const teacherRemark = getTeacherRemark(s.total, s.entries.length);
+        const conduct = getConductComment(percent);
+
+        div.innerHTML = `
+          <div>
+            <div class="top-bar">
+              <div class="logo"><img src="school-logo.png" alt="School Logo" /></div>
+              <div class="header-text">
+                <h2>GHANA EDUCATION SERVICE</h2>
+                <div class="school-name">NKAWKAW-NSUTA M/A BASIC 'B' SCHOOL</div>
+                <div class="motto">"KNOWLEDGE IS POWER"</div>
+                <h3>TERMINAL REPORT - ${term.toUpperCase()}</h3>
+              </div>
+            </div>
+
+            <div class="info-row">
+              <div class="student-info">
+                <strong>Name:</strong> ${s.name}<br />
+                <strong>Student ID:</strong> ${s.id}<br />
+                <strong>Class:</strong> ${s.class}<br />
+                <strong>Academic Year:</strong> ${year}<br />
+                <strong>Position in Class:</strong> ${s.position} / ${rankedStudents.length}<br />
+                <strong>Date of Vacation:</strong> Thursday, April 17, ${year}<br />
+                <strong>Next Term Begins:</strong> Tuesday, May 6, ${year}
+              </div>
+              <img class="student-photo" src="photos/${s.id}.jpg" onerror="this.src='photos/placeholder.jpg'" />
+            </div>
+
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>SBA</th>
+                <th>Exam</th>
+                <th>Total</th>
+                <th>Grade</th>
+                <th>Remark</th>
+              </tr>
+            </thead>
+            <tbody>${subjects}</tbody>
+          </table>
+
+          <div class="footer">
+            <strong>Total Score:</strong> ${s.total.toFixed(0)} / ${s.entries.length * 100}<br>
+            <strong>Attendance:</strong> ___ / ___<br>
+            <strong>Conduct:</strong> ${conduct}<br>
+            <strong>Interest/Talent:</strong> Sports<br>
+            <strong>Class Teacher's Remark:</strong> ${teacherRemark}
+          </div>
+
+          <div class="signature">
+            <div>Class Teacher<br><br>_________________</div>
+            <div>Headteacher<br><br>_________________</div>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    renderReports();
+
+    function downloadPDF() {
+      const element = document.getElementById("reportContainer");
+      const opt = {
+        margin: 0.25,
+        filename: 'All-Terminal-Reports.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' },
+        pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+      };
+      html2pdf().set(opt).from(element).save();
+    }
+  </script>
+</body>
+</html>

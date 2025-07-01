@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Settings – Academic Term</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 40px; }
+    input, select { padding: 8px; margin-bottom: 15px; display: block; width: 300px; }
+    button { padding: 10px 16px; margin-top: 10px; }
+    .notice { margin-top: 20px; color: #333; font-weight: bold; }
+  </style>
+  <script src="router.js"></script>
+</head>
+<body>
+  <script>
+    const role = sessionStorage.getItem("role");
+    if (role !== "headteacher") {
+      alert("Access denied.");
+      window.location.href = "welcome.html";
+    }
+  </script>
+
+  <h2>📘 Academic Term Settings</h2>
+
+  <label for="academic-year">Academic Year (e.g. 2024/2025)</label>
+  <input type="text" id="academic-year" placeholder="Enter academic year" />
+
+  <label for="term-select">Current Term</label>
+  <select id="term-select">
+    <option value="">-- Select Term --</option>
+    <option value="Term 1">Term 1</option>
+    <option value="Term 2">Term 2</option>
+    <option value="Term 3">Term 3</option>
+  </select>
+
+  <button onclick="saveSettings()">💾 Save Settings</button>
+  <button onclick="window.location.href='portals.html'">🏠 Back to Dashboard</button>
+
+  <p id="current-display" class="notice"></p>
+
+  <script>
+    function saveSettings() {
+      const year = document.getElementById("academic-year").value.trim();
+      const term = document.getElementById("term-select").value;
+
+      if (!year || !term) {
+        alert("Please enter both Academic Year and Term.");
+        return;
+      }
+
+      const setting = { year, term };
+      localStorage.setItem("schoolTerm", JSON.stringify(setting));
+      displaySetting();
+    }
+
+    function displaySetting() {
+      const setting = JSON.parse(localStorage.getItem("schoolTerm")) || {};
+      const display = document.getElementById("current-display");
+
+      if (setting.year && setting.term) {
+        display.textContent = `📅 Current Setting: ${setting.year} – ${setting.term}`;
+      } else {
+        display.textContent = "No term set yet.";
+      }
+    }
+
+    displaySetting();
+  </script>
+</body>
+</html>

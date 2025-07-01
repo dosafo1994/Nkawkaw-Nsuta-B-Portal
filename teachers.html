@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manage Teachers</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body { font-family: Arial, sans-serif; padding: 40px; }
+    h2 { text-align: center; }
+
+    input, select {
+      padding: 6px;
+      margin: 4px;
+      font-size: 14px;
+    }
+
+    button {
+      padding: 6px 12px;
+      font-size: 14px;
+      margin: 4px;
+      cursor: pointer;
+    }
+
+    table {
+      width: 100%;
+      margin-top: 20px;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 8px;
+      border: 1px solid #ccc;
+      text-align: left;
+    }
+
+    th { background-color: #f5f5f5; }
+
+    .success {
+      background: #e7ffe7;
+      border: 1px solid #b2e0b2;
+      padding: 8px;
+      margin-top: 10px;
+      color: green;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 5px;
+    }
+
+    .checkbox-group label {
+      display: flex;
+      align-items: center;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .tag-list li {
+      background-color: #f0f0f0;
+      padding: 4px 8px;
+      border-radius: 4px;
+    }
+
+    .actions button {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📘 Teacher Management</h2>
+
+  <div>
+    <input type="text" id="name" placeholder="Full Name" />
+    <input type="tel" id="phone" placeholder="Phone Number" />
+
+    <div>
+      <strong>Select Class(es):</strong>
+      <div id="classCheckboxes" class="checkbox-group"></div>
+    </div>
+
+    <div>
+      <strong>Select Subject(s):</strong>
+      <div id="subjectCheckboxes" class="checkbox-group"></div>
+    </div>
+
+    <button onclick="addTeacher()">+ Add Teacher</button>
+  </div>
+
+  <div id="pinNotice"></div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Classes</th>
+        <th>Subjects</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="teacherTable"></tbody>
+  </table>
+
+  <script>
+    const availableClasses = ["JHS 1", "JHS 2", "JHS 3"];
+    const availableSubjects = [
+      "English Language", "Mathematics", "Integrated Science", "Social Studies",
+      "Computing", "Religious and Moral Education", "Ghanaian Language",
+      "Creative Art and Design", "Career Technology"
+    ];
+
+    let teachers = JSON.parse(localStorage.getItem("userAccounts")) || [];
+
+    const classContainer = document.getElementById("classCheckboxes");
+    const subjectContainer = document.getElementById("subjectCheckboxes");
+
+    availableClasses.forEach(cls => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = cls;
+      label.appendChild(checkbox);
+      label.append(" " + cls);
+      classContainer.appendChild(label);
+    });
+
+    availableSubjects.forEach(subj => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = subj;
+      label.appendChild(checkbox);
+      label.append(" " + subj);
+      subjectContainer.appendChild(label);
+    });
+
+    function generatePin() {
+      return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    function addTeacher() {
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+      const selectedClasses = Array.from(classContainer.querySelectorAll("input:checked")).map(cb => cb.value);
+      const selectedSubjects = Array.from(subjectContainer.querySelectorAll("input:checked")).map(cb => cb.value);
+
+      if (!name || !phone || selectedClasses.length === 0 || selectedSubjects.length === 0) {
+        alert("Please complete all fields.");
+        return;
+      }
+
+      if (teachers.some(t => t.phone === phone)) {
+        alert("A teacher with this phone number already exists.");
+        return;
+      }
+
+      const pin = generatePin();
+
+      const newTeacher = {
+        name,
+        phone,
+        classes: selectedClasses,
+        subjects: selectedSubjects,
+        role: "teacher",
+        pin
+      };
+
+      teachers.push(newTeacher);
+      localStorage.setItem("userAccounts", JSON.stringify(teachers));
+
+      renderTable();
+
+      document.getElementById("pinNotice").innerHTML =
+        `<div class="success">PIN for ${name}: <strong>${pin}</strong> (Copy this — it will not show again.)</div>`;
+
+      document.getElementById("name").value = "";
+      document.getElementById("phone").value = "";
+      classContainer.querySelectorAll("input").forEach(i => i.checked = false);
+      subjectContainer.querySelectorAll("input").forEach(i => i.checked = false);
+    }
+
+    function renderTable() {
+      const table = document.getElementById("teacherTable");
+      table.innerHTML = "";
+
+      teachers
+        .filter(t => t.role === "teacher")
+        .forEach((teacher, index) => {
+          const row = document.createElement("tr");
+
+          const classList = teacher.classes.map(c => `<li>${c}</li>`).join("");
+          const subjectList = teacher.subjects.map(s => `<li>${s}</li>`).join("");
+
+          row.innerHTML = `
+            <td contenteditable onblur="updateField(${index}, 'name', this.innerText)">${teacher.name}</td>
+            <td contenteditable onblur="updatePhone(${index}, this.innerText)">${teacher.phone}</td>
+            <td><ul class="tag-list">${classList}</ul></td>
+            <td><ul class="tag-list">${subjectList}</ul></td>
+            <td class="actions">
+              <button onclick="deleteTeacher(${index})">🗑 Remove</button>
+            </td>
+          `;
+          table.appendChild(row);
+        });
+    }
+
+    function updateField(index, field, value) {
+      teachers[index][field] = value.trim();
+      localStorage.setItem("userAccounts", JSON.stringify(teachers));
+    }
+
+    function updatePhone(index, value) {
+      const newPhone = value.trim();
+      if (
+        teachers.some((t, i) => i !== index && t.phone === newPhone)
+      ) {
+        alert("That phone number is already assigned to another teacher.");
+        renderTable();
+        return;
+      }
+      teachers[index].phone = newPhone;
+      localStorage.setItem("userAccounts", JSON.stringify(teachers));
+    }
+
+    function deleteTeacher(index) {
+      if (confirm("Are you sure you want to remove this teacher?")) {
+        teachers.splice(index, 1);
+        localStorage.setItem("userAccounts", JSON.stringify(teachers));
+        renderTable();
+      }
+    }
+
+    renderTable();
+  </script>
+</body>
+</html>

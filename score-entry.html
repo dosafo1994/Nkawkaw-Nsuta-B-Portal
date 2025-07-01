@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Score Entry</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="router.js"></script>
+  <style>
+    body {
+      padding: 40px;
+      max-width: 800px;
+      margin: auto;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+    }
+    select, input {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+    .btn-row {
+      margin-top: 20px;
+    }
+    table {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+<body>
+  <h2>📘 Score Entry Panel</h2>
+
+  <label>Subject</label>
+  <input type="text" id="subjectInput" readonly />
+
+  <label>Class</label>
+  <input type="text" id="classInput" readonly />
+
+  <label>Select Student</label>
+  <select id="studentSelect">
+    <option value="">-- Select student --</option>
+  </select>
+
+  <label>Class Score (out of 60)</label>
+  <input type="number" id="classScore" min="0" max="60" />
+
+  <label>Exam Score (out of 40)</label>
+  <input type="number" id="examScore" min="0" max="40" />
+
+  <div class="btn-row">
+    <button onclick="submitScore()">Submit Score</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Student</th>
+        <th>Class Score</th>
+        <th>Exam</th>
+        <th>Total</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody id="submittedList"></tbody>
+  </table>
+
+  <script>
+    const teacher = sessionStorage.getItem("displayName");
+    const role = sessionStorage.getItem("role");
+    const url = new URLSearchParams(location.search);
+    const subjectParam = url.get("subject");
+    const classParam = url.get("class");
+
+    if (role !== "teacher") {
+      alert("Access denied.");
+      location.href = "welcome.html";
+    }
+
+    const students = JSON.parse(localStorage.getItem("studentDatabase")) || [];
+    const submitted = JSON.parse(localStorage.getItem("submittedScores")) || [];
+
+    document.getElementById("subjectInput").value = subjectParam || "";
+    document.getElementById("classInput").value = classParam || "";
+
+    const studentSelect = document.getElementById("studentSelect");
+    const tableBody = document.getElementById("submittedList");
+
+    function populateStudents() {
+      const filtered = students.filter(s => s.class === classParam);
+      studentSelect.innerHTML = '<option value="">-- Select student --</option>';
+      filtered.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s.studentId || s.id;
+        opt.textContent = `${s.name} (${s.studentId || s.id})`;
+        studentSelect.appendChild(opt);
+      });
+    }
+
+    function submitScore() {
+      const studentId = studentSelect.value;
+      const classScore = Number(document.getElementById("classScore").value);
+      const examScore = Number(document.getElementById("examScore").value);
+
+      if (!studentId || isNaN(classScore) || isNaN(examScore)) {
+        return alert("Complete all fields before submitting.");
+      }
+
+      const student = students.find(s => s.studentId === studentId || s.id === studentId);
+      const total = classScore + examScore;
+
+      const existing = submitted.find(s =>
+        s.studentId === studentId &&
+        s.subject === subjectParam &&
+        s.class === classParam
+      );
+      if (existing) {
+        alert("This student's score has already been submitted.");
+        return;
+      }
+
+      submitted.push({
+        studentId,
+        studentName: student.name,
+        subject: subjectParam,
+        class: classParam,
+        classScore,
+        examScore,
+        finalScore: total,
+        teacher,
+        status: "Pending"
+      });
+
+      localStorage.setItem("submittedScores", JSON.stringify(submitted));
+      renderTable();
+      alert("✅ Score submitted!");
+    }
+
+    function renderTable() {
+      tableBody.innerHTML = "";
+      submitted
+        .filter(s => s.subject === subjectParam && s.class === classParam && s.teacher === teacher)
+        .forEach(e => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${e.studentName}</td>
+            <td>${e.classScore}</td>
+            <td>${e.examScore}</td>
+            <td>${e.finalScore}</td>
+            <td><span class="badge ${e.status}">${e.status}</span></td>
+          `;
+          tableBody.appendChild(row);
+        });
+    }
+
+    populateStudents();
+    renderTable();
+  </script>
+</body>
+</html>

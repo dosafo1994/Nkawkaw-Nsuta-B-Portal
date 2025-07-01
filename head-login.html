@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Headteacher Login | Nkawkaw Nsuta Portal</title>
+  <script src="router.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f8ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+    }
+    h2 {
+      margin-bottom: 30px;
+    }
+    input, button {
+      padding: 10px;
+      margin: 8px;
+      width: 280px;
+      font-size: 16px;
+    }
+    button {
+      background: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    .login-box {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .back-link {
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <h2>🧑🏽‍💼 Headteacher Login</h2>
+
+    <input type="text" id="phone" placeholder="Phone number or username" />
+    <input type="password" id="pin" placeholder="4-digit PIN" maxlength="4" />
+    <button onclick="headLogin()">Login</button>
+
+    <div class="back-link">
+      <a href="welcome.html">← Back to Welcome</a>
+    </div>
+  </div>
+
+  <script>
+    function headLogin() {
+      const phone = document.getElementById("phone").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const role = "headteacher";
+
+      if (!phone || !pin) {
+        alert("Please enter your phone and PIN.");
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem("userAccounts")) || [];
+      const match = users.find(
+        u => (u.phone === phone || u.username === phone) && u.pin === pin && u.role === role
+      );
+
+      if (!match) {
+        alert("Incorrect credentials. Please try again or contact support.");
+        return;
+      }
+
+      sessionStorage.setItem("username", match.phone || match.username);
+      sessionStorage.setItem("role", role);
+      sessionStorage.setItem("displayName", match.name || "Headteacher");
+
+      window.location.href = "index.html"; // Redirect to headteacher dashboard
+    }
+  </script>
+</body>
+</html>

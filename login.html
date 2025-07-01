@@ -2,91 +2,104 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Login | Nkawkaw Nsuta B</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>Login | Nkawkaw Nsuta Portal</title>
+  <script src="router.js"></script>
   <style>
     body {
+      font-family: Arial, sans-serif;
+      background: #f2f9ff;
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 80px;
-      font-family: sans-serif;
+      padding-top: 80px;
     }
-
+    h2 {
+      margin-bottom: 30px;
+    }
     input, select, button {
       padding: 10px;
-      margin: 10px;
-      width: 250px;
+      margin: 8px;
+      width: 280px;
+      font-size: 16px;
     }
-
-    #teacher-login, #headteacher-login {
-      border: 1px solid #ddd;
-      padding: 20px;
+    button {
+      background: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+    .login-box {
+      background: white;
+      padding: 30px;
       border-radius: 8px;
-      margin-top: 20px;
-      background: #f9f9f9;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .back-link {
+      font-size: 14px;
+      margin-top: 12px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-    <div class="school-banner">
-  Nkawkaw Nsuta B Basic School
-</div>
-  <h1>Log In</h1>
+  <div class="login-box">
+    <h2>🔐 Nkawkaw Nsuta Portal Login</h2>
 
-  <div id="login-choice">
-    <button onclick="showTeacher()">I’m a Teacher</button>
-    <button onclick="showHeadteacher()">I’m the Headteacher</button>
-  </div>
-
-  <div id="teacher-login" style="display:none;">
-    <h2>Teacher Login</h2>
-    <select id="teacher-name">
-      <option value="">-- Select Your Name --</option>
-      <option value="Mr. Bright Ahiable">Mr. Bright Ahiable</option>
-      <option value="Mr. Stephen Amnakwah">Mr. Stephen Amnakwah</option>
-      <option value="Mr. Nii Quaye Kotei">Mr. Nii Quaye Kotei</option>
-      <option value="Mr. Yiadom">Mr. Yiadom</option>
-      <option value="Mrs. Cathrine">Mrs. Cathrine</option>
-      <option value="Mrs. Matilda Sagoe">Mrs. Matilda Sagoe</option>
-      <option value="Mr. Frank Opoku">Mr. Frank Opoku</option>
+    <input type="text" id="phone" placeholder="Phone number (e.g. 0241234567)" />
+    <input type="password" id="pin" placeholder="4-digit PIN" maxlength="4" />
+    <select id="role">
+      <option value="">-- Select Role --</option>
+      <option value="teacher">Teacher</option>
+      <option value="headteacher">Headteacher</option>
+      <option value="admin">Admin</option>
     </select>
-    <button onclick="loginTeacher()">Enter</button>
-  </div>
 
-  <div id="headteacher-login" style="display:none;">
-    <h2>Headteacher Login</h2>
-    <input type="password" id="head-pass" placeholder="Enter Passcode" />
-    <button onclick="loginHeadteacher()">Enter</button>
+    <button onclick="login()">Login</button>
+    <div class="back-link">
+      <a href="welcome.html">← Back to Welcome</a>
+    </div>
   </div>
 
   <script>
-    function showTeacher() {
-      document.getElementById("teacher-login").style.display = "block";
-      document.getElementById("headteacher-login").style.display = "none";
-    }
+    function login() {
+      const phone = document.getElementById("phone").value.trim();
+      const pin = document.getElementById("pin").value.trim();
+      const role = document.getElementById("role").value;
 
-    function showHeadteacher() {
-      document.getElementById("headteacher-login").style.display = "block";
-      document.getElementById("teacher-login").style.display = "none";
-    }
+      if (!phone || !pin || !role) {
+        alert("Please fill in all fields.");
+        return;
+      }
 
-    function loginTeacher() {
-      const name = document.getElementById("teacher-name").value;
-      if (!name) return alert("Please select your name");
-      sessionStorage.setItem("role", "teacher");
-      sessionStorage.setItem("username", name);
-      window.location.href = "teacher.html";
-    }
+      const users = JSON.parse(localStorage.getItem("userAccounts")) || [];
+      const found = users.find(
+        user => (user.phone === phone || user.username === phone) && user.pin === pin && user.role === role
+      );
 
-    function loginHeadteacher() {
-      const pass = document.getElementById("head-pass").value;
-      if (pass === "admin123") { // 🔒 Set your secure passcode here
-        sessionStorage.setItem("role", "headteacher");
-        sessionStorage.setItem("username", "Headteacher");
-        window.location.href = "index.html";
-      } else {
-        alert("Incorrect passcode");
+      if (!found) {
+        alert("Incorrect credentials. Please try again or contact the headteacher.");
+        return;
+      }
+
+      sessionStorage.setItem("username", found.phone || found.username);
+      sessionStorage.setItem("role", found.role);
+      sessionStorage.setItem("displayName", found.name || "User");
+
+      switch (found.role) {
+        case "headteacher":
+          window.location.href = "index.html";
+          break;
+        case "teacher":
+          window.location.href = "teacher.html";
+          break;
+        case "admin":
+          window.location.href = "admin.html";
+          break;
+        default:
+          window.location.href = "welcome.html";
       }
     }
   </script>

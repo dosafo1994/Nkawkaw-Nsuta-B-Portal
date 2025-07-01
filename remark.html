@@ -1,53 +1,91 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Term Observations Entry</title>
-  <link rel="stylesheet" href="style.css">
+  <script src="router.js"></script>
   <style>
-    body { font-family: sans-serif; padding: 30px; }
-    textarea, input { width: 100%; margin-bottom: 10px; padding: 8px; }
-    select { width: 100%; padding: 8px; margin-bottom: 15px; }
-    label { font-weight: bold; margin-top: 20px; display: block; }
-    .entry-box { max-width: 700px; margin: auto; }
+    body { font-family: sans-serif; padding: 30px; background: #f4f9ff; }
+    textarea, input, select {
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 8px;
+      font-size: 14px;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 20px;
+      display: block;
+    }
+    .entry-box {
+      max-width: 700px;
+      margin: auto;
+      background: white;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .school-banner {
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0077cc;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background: #005fa3;
+    }
   </style>
 </head>
 <body>
   <div class="school-banner">Nkawkaw Nsuta B Basic School</div>
+
   <div class="entry-box">
     <h2>Enter Term Observations</h2>
 
     <label>Class</label>
-    <select id="select-class">
-      <option value="">-- Select --</option>
-      <option value="JHS1">JHS1</option>
-      <option value="JHS2">JHS2</option>
+    <select id="select-class" onchange="populateStudents()">
+      <option value="">-- Select Class --</option>
+      <option value="JHS 1">JHS 1</option>
+      <option value="JHS 2">JHS 2</option>
+      <option value="JHS 3">JHS 3</option>
     </select>
 
     <label>Student</label>
-    <select id="select-student"></select>
+    <select id="select-student">
+      <option value="">-- Select Student --</option>
+    </select>
 
     <label>Total Attendance</label>
-    <input type="number" id="attendance" placeholder="e.g. 55">
+    <input type="number" id="attendance" placeholder="e.g. 55" />
 
     <label>Times School Opened</label>
-    <input type="number" id="opened" placeholder="e.g. 60">
+    <input type="number" id="opened" placeholder="e.g. 60" />
 
     <label>Strength / Weakness</label>
-    <textarea id="strength"></textarea>
+    <textarea id="strength" rows="2"></textarea>
 
     <label>Interest</label>
-    <textarea id="interest"></textarea>
+    <textarea id="interest" rows="2"></textarea>
 
     <label>Conduct</label>
-    <textarea id="conduct"></textarea>
+    <textarea id="conduct" rows="2"></textarea>
 
     <label>Teacher's Remarks</label>
-    <textarea id="teacher-remarks"></textarea>
+    <textarea id="teacher-remarks" rows="2"></textarea>
 
     <button onclick="saveRemarks()">💾 Save Remarks</button>
+    <button onclick="window.location.href='portals.html'">← Back to Dashboard</button>
   </div>
 
-  <script src="remarks.js"></script>
+  <script src="remark.js"></script>
 </body>
 </html>

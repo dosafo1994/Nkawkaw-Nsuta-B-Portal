@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Forgot PIN | Nsuta Portal</title>
+  <script src="router.js"></script>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f2f9ff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 80px;
+    }
+    .box {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      width: 320px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #0077cc;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #005fa3;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>🔁 Forgot PIN</h2>
+    <input type="text" id="phone" placeholder="Phone Number (e.g. 0241234567)" />
+    <input type="password" id="newPin" placeholder="New 4-digit PIN" maxlength="4" />
+    <input type="password" id="confirmPin" placeholder="Confirm New PIN" maxlength="4" />
+    <button onclick="resetPin()">Reset PIN</button>
+    <button onclick="window.location.href='welcome.html'">← Back</button>
+  </div>
+
+  <script>
+    function resetPin() {
+      const phone = document.getElementById("phone").value.trim();
+      const newPin = document.getElementById("newPin").value.trim();
+      const confirmPin = document.getElementById("confirmPin").value.trim();
+
+      if (!phone || !newPin || !confirmPin) {
+        alert("Please fill in all fields.");
+        return;
+      }
+
+      if (newPin !== confirmPin) {
+        alert("New PINs do not match.");
+        return;
+      }
+
+      const users = JSON.parse(localStorage.getItem("userAccounts")) || [];
+      const index = users.findIndex(u => u.phone === phone && u.role === "teacher");
+
+      if (index === -1) {
+        alert("Phone number not found. Please contact the headteacher.");
+        return;
+      }
+
+      users[index].pin = newPin;
+      localStorage.setItem("userAccounts", JSON.stringify(users));
+
+      alert("Your PIN has been reset successfully.");
+      window.location.href = "teacher.html";
+    }
+  </script>
+</body>
+</html>

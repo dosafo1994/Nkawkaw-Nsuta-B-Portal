@@ -20,6 +20,11 @@ h1, h2, h3 {
   color: var(--primary);
 }
 
+h4, h5, h6 {
+  color: var(--primary);
+  margin-top: 1.2em;
+}
+
 /* ===== Header ===== */
 header {
   background-color: var(--primary);
@@ -56,6 +61,14 @@ select {
   margin: 8px 0 16px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  transition: box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus {
+  border-color: var(--primary);
+  outline: none;
+  box-shadow: 0 0 4px var(--primary);
 }
 
 /* ===== Tables ===== */
@@ -101,6 +114,11 @@ table th {
   color: #fff;
 }
 
+.badge.default {
+  background-color: #ccc;
+  color: #333;
+}
+
 /* ===== Responsive Layout ===== */
 @media screen and (max-width: 768px) {
   body {
@@ -115,6 +133,13 @@ table th {
   input, select, button {
     width: 100%;
     box-sizing: border-box;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .container {
+    flex-direction: column;
+    gap: 20px;
   }
 }
 

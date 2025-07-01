@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Student Reports | Nkawkaw Nsuta B</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="preload.js"></script>
+  <style>
+    /* Layout & Print */
+    body { font-family: Georgia, serif; background: #f2f9ff; padding: 30px; }
+    .report { background: white; padding: 40px; margin-bottom: 50px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+    .student-photo { width: 100px; height: 100px; object-fit: cover; border: 1px solid #ccc; float: right; }
+
+    .banner { text-align: center; margin-bottom: 30px; }
+    .school-name { font-size: 20px; font-weight: bold; }
+    .motto { font-style: italic; margin: 5px 0; }
+
+    h3.term-title { text-align: center; margin-top: 10px; }
+
+    .info-grid { display: flex; flex-wrap: wrap; justify-content: space-between; }
+    .info-grid > div { width: 48%; margin-bottom: 10px; }
+
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 6px; text-align: center; }
+    th { background: #eee; }
+
+    textarea, input { width: 100%; padding: 6px; margin-top: 5px; }
+
+    .buttons { margin-top: 20px; }
+    .buttons button {
+      padding: 8px 12px; margin: 5px; background: #0077cc; color: white; border: none; cursor: pointer;
+    }
+
+    @media print {
+      .no-print, .buttons { display: none !important; }
+      body { padding: 0; }
+      .report { box-shadow: none; margin: 0 auto; page-break-after: always; }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print">
+    <label for="student-select"><strong>Select Student (or leave blank for full print):</strong></label>
+    <select id="student-select"></select>
+    <button onclick="renderReports()">Generate Report</button>
+    <button onclick="downloadAll()">Download PDF</button>
+  </div>
+
+  <div id="report-container"></div>
+
+  <script src="report-hybrid.js"></script>
+</body>
+</html>

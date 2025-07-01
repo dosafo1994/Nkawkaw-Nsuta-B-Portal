@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Welcome | Nkawkaw Nsuta B Basic School</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="router.js"></script>
+  <script src="preload.js"></script>
+  <script>
+    // Auto-redirect if user session is already active
+    const role = sessionStorage.getItem("role");
+    const username = sessionStorage.getItem("username");
+
+    if (username && role) {
+      switch (role) {
+        case "teacher":
+          window.location.href = "teacher.html";
+          break;
+        case "headteacher":
+          window.location.href = "index.html";
+          break;
+        case "admin":
+          window.location.href = "admin.html";
+          break;
+        default:
+          // Unknown role; fallback behavior
+          break;
+      }
+    }
+  </script>
+  <style>
+    :root {
+      --btn-bg: #0077cc;
+      --btn-hover: #005fa3;
+      --text-color: white;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: url('school-banner.jpg') center/cover no-repeat;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: var(--text-color);
+      backdrop-filter: brightness(0.6);
+      padding: 40px;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      margin-bottom: 0.3em;
+    }
+
+    h3 {
+      font-style: italic;
+      margin-bottom: 1.4em;
+    }
+
+    .cta-button {
+      background: var(--btn-bg);
+      color: var(--text-color);
+      padding: 14px 28px;
+      margin: 10px;
+      font-size: 1.2em;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s ease;
+    }
+
+    .cta-button:hover {
+      background: var(--btn-hover);
+    }
+
+    @media screen and (max-width: 480px) {
+      h1 { font-size: 2em; }
+      .cta-button {
+        width: 100%;
+        font-size: 1em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Nkawkaw Nsuta B Basic School</h1>
+  <h3>"Knowledge, Integrity, Excellence"</h3>
+
+  <a href="teacher-login.html" class="cta-button">👨‍🏫 I am a Teacher</a>
+  <a href="head-login.html" class="cta-button">👩‍🏫 I am a Headteacher</a>
+</body>
+</html>
